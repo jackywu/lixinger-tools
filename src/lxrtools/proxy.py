@@ -31,21 +31,21 @@ ua = UserAgent()
 @app.api_route("/api/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 async def proxy_request(path: str, request: Request) -> Response:
     """Proxy all requests to Lixinger API with caching for GET and POST.
-    
+
     Args:
         path: API endpoint path
         request: FastAPI request object
-        
+
     Returns:
         JSON response from upstream API or cache
     """
     method = request.method.upper()
-    
+
     # Prepare request data based on method
     query_params = dict(request.query_params)
     body_text: str | None = None
     json_body: dict[str, Any] | None = None
-    
+
     if method == "GET":
         # GET: token in query params
         if "token" not in query_params:
@@ -59,7 +59,7 @@ async def proxy_request(path: str, request: Request) -> Response:
             body_text = json.dumps(json_body, sort_keys=True, ensure_ascii=False)
         except Exception:
             body_text = "{}"
-    
+
     # Check cache for GET and POST
     if method in {"GET", "POST"}:
         cached_data = cache_manager.get(method, path, query_params, body_text)
@@ -68,7 +68,7 @@ async def proxy_request(path: str, request: Request) -> Response:
                 content=cached_data,
                 headers={"X-Cache": "HIT"},
             )
-    
+
     # Apply rate limiting (wait if needed)
     try:
         wait_time = await rate_limiter.wait_if_needed()
@@ -81,7 +81,7 @@ async def proxy_request(path: str, request: Request) -> Response:
             content={"error": str(e)},
             headers={"Retry-After": str(settings.rate_limit_max_wait_seconds)},
         )
-    
+
     # Forward request to upstream API
     upstream_url = f"{settings.upstream_api_base}/{path}"
     headers = {
@@ -89,7 +89,7 @@ async def proxy_request(path: str, request: Request) -> Response:
     }
 
     headers["Content-Type"] = request.headers.get("Content-Type", "application/json")
-    
+
     async with httpx.AsyncClient(timeout=30.0) as client:
         try:
             if method == "GET":
@@ -106,17 +106,19 @@ async def proxy_request(path: str, request: Request) -> Response:
                     headers=headers,
                     json=json_body,
                 )
-            
+
             response.raise_for_status()
-            
+
             # Parse JSON response
             try:
                 response_data = response.json()
-                
+
                 # Cache successful responses for GET and POST
                 if method in {"GET", "POST"} and response.status_code < 400:
-                    cache_manager.set(method, path, query_params, response_data, body_text)
-                
+                    cache_manager.set(
+                        method, path, query_params, response_data, body_text
+                    )
+
                 return JSONResponse(
                     content=response_data,
                     status_code=response.status_code,
@@ -129,7 +131,7 @@ async def proxy_request(path: str, request: Request) -> Response:
                     status_code=response.status_code,
                     media_type=response.headers.get("Content-Type", "text/plain"),
                 )
-            
+
         except httpx.HTTPStatusError as e:
             return JSONResponse(
                 status_code=e.response.status_code,
@@ -161,6 +163,7 @@ async def root() -> dict[str, Any]:
             "ttl_seconds": settings.cache_ttl_seconds,
             "max_size": settings.cache_max_size,
             "current_size": len(cache_manager.cache),
+            "cache_dir": settings.cache_dir,
         },
         "rate_limit": {
             "window_seconds": settings.rate_limit_window_seconds,
