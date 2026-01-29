@@ -1,0 +1,68 @@
+# Source: https://www.lixinger.com/open/api/doc?api-key=cn/industry/fs/sw_2021/hybrid
+
+# 财报数据API[购买](/open/api/price-tier?api-groups=[{%22areaCode%22:%22cn%22,%22dataType%22:%22industry%22}])
+
+简要描述:
+
+* 获取财务数据，如营业收入、ROE等。
+
+说明:
+
+* 指标计算请参考[行业财务数据计算](/wiki/stock-collection-fs-calculation)
+
+请求URL:
+
+* `https://open.lixinger.com/api/cn/industry/fs/sw_2021/hybrid`
+
+请求方式:
+
+* POST
+
+参数:
+
+| 参数名称 | 必选 | 数据类型 | 说明 |
+| --- | --- | --- | --- |
+| token | Yes | String | [我的Token](/open/api/token)页有用户专属且唯一的Token。 |
+| stockCodes | Yes | Array | 行业代码数组。stockCodes长度>=1且<=100，格式如下：["490000"]。 请参考[行业信息API](/open/api/detail?api-key=cn/industry)获取合法的stockCode。  需要注意的是，当传入startDate时只能传入一个股票代码。 |
+| date | No | String: latest | YYYY-MM-DD(北京时间) | 信息日期。用于获取指定日期数据。 由于每个季度的最后一天为财报日，请确保传入正确的日期，例如：2017-03-31、2017-06-30、2017-09-30、2017-12-31 或 latest。  其中，传入**latest**会得到最近1.1年内的最新财报数据。  需要注意的是，startDate和date至少要传一个。 |
+| startDate | No | String: YYYY-MM-DD(北京时间) | 信息起始时间。用于获取一定时间范围内的数据。开始和结束的时间间隔不超过10年 需要注意的是，startDate和date至少要传一个。 |
+| endDate | No | String: YYYY-MM-DD(北京时间) | 信息结束时间。用于获取一定时间范围内的数据。默认值是上周一。 需要注意的是，请与startDate一起使用。 |
+| limit | No | Number | 返回最近数据的数量。limit仅在请求数据为date range的情况下生效。 |
+| metricsList | Yes | Array | 指标数组，指标格式为**[granularity].[tableName].[fieldName].[expressionCalculateType]**。比如，你想获取营业总收入累计原始值以及应收账款当期同比值，对应的metricsList设置为：["q.ps.toi.t", "q.bs.ar.c\_y2y"]。 需要注意的是，当stockCodes长度大于1时最多只能选取48个指标；当stockCodes长度等于1时最多只能获取128 个指标。 当前支持: granularity   * 年 :y * 半年 :hy * 季度 :q   expressionCalculateType   * 资产负债表:   + 年(y):     - 当期 :t     - 当期回溯值 :t\_r     - 当期同比 :t\_y2y     - 当期环比 :t\_c2c   + 半年(hy):     - 当期 :t     - 当期回溯值 :t\_r     - 当期同比 :t\_y2y     - 当期环比 :t\_c2c     - 半年 :c     - 半年回溯值 :c\_r     - 半年同比 :c\_y2y     - 半年环比 :c\_c2c   + 季度(q):     - 当期 :t     - 当期回溯值 :t\_r     - 当期同比 :t\_y2y     - 当期环比 :t\_c2c     - 单季 :c     - 单季回溯值 :c\_r     - 单季同比 :c\_y2y     - 单季环比 :c\_c2c * 利润表:   + 年(y):     - 累积 :t     - 累积回溯值 :t\_r     - 累积同比 :t\_y2y   + 半年(hy):     - 累积 :t     - 累积回溯值 :t\_r     - 累积同比 :t\_y2y     - 累积环比 :t\_c2c     - 半年 :c     - 半年回溯值 :c\_r     - 半年同比 :c\_y2y     - 半年环比 :c\_c2c     - 半年年比 :c\_2y     - TTM :ttm     - TTM同比 :ttm\_y2y     - TTM环比 :ttm\_c2c   + 季度(q):     - 累积 :t     - 累积回溯值 :t\_r     - 累积同比 :t\_y2y     - 累积环比 :t\_c2c     - 单季 :c     - 单季回溯值 :c\_r     - 单季同比 :c\_y2y     - 单季环比 :c\_c2c     - 单季年比 :c\_2y     - TTM :ttm     - TTM同比 :ttm\_y2y     - TTM环比 :ttm\_c2c * 现金流量表:   + 年(y):     - 累积 :t     - 累积回溯值 :t\_r     - 累积同比 :t\_y2y   + 半年(hy):     - 累积 :t     - 累积回溯值 :t\_r     - 累积同比 :t\_y2y     - 累积环比 :t\_c2c     - 半年 :c     - 半年回溯值 :c\_r     - 半年同比 :c\_y2y     - 半年环比 :c\_c2c     - 半年年比 :c\_2y     - TTM :ttm     - TTM同比 :ttm\_y2y     - TTM环比 :ttm\_c2c   + 季度(q):     - 累积 :t     - 累积回溯值 :t\_r     - 累积同比 :t\_y2y     - 累积环比 :t\_c2c     - 单季 :c     - 单季回溯值 :c\_r     - 单季同比 :c\_y2y     - 单季环比 :c\_c2c     - 单季年比 :c\_2y     - TTM :ttm     - TTM同比 :ttm\_y2y     - TTM环比 :ttm\_c2c   tableName.fieldName     * 资产负债表   + 一、资产总计 : bs.ta   + 长期股权投资 : bs.ltei   + 投资性房地产 : bs.rei   + 固定资产 : bs.fa   + 固定资产占总资产比率 : bs.fa\_ta\_r   + 使用权资产 : bs.roua   + 无形资产 : bs.ia   + 商誉 : bs.gw   + 商誉占净资产比率 : bs.gw\_toe\_r   + 递延所得税资产 : bs.dita   + 二、负债合计 : bs.tl   + 资产负债率 : bs.tl\_ta\_r   + 拆入资金 : bs.pfbaofi   + 应付职工薪酬 : bs.sawp   + 应交税费 : bs.tp   + 应付债券 : bs.bp   + 递延所得税负债 : bs.ditl   + 三、所有者权益合计 : bs.toe   + 股东权益占比 : bs.toe\_ta\_r   + 股本 : bs.sc   + 其他权益工具 : bs.oei   + (其中)优先股 : bs.psioei   + (其中)永续债 : bs.pcsioei   + 资本公积 : bs.capr   + 减：库存股 : bs.is   + 其他综合收益 : bs.oci   + 专项储备 : bs.rr   + 盈余公积 : bs.surr   + 一般风险准备金 : bs.pogr   + 未分配利润 : bs.rtp   + 外币报表折算差额 : bs.er   + 归属于母公司股东及其他权益持有者的权益合计 : bs.tetshaoehopc   + 归属于母公司普通股股东权益合计 : bs.tetoshopc   + 少数股东权益 : bs.etmsh   + 四、员工情况   + 员工人数 : bs.ep\_stn   + 五、股本、股东以及估值   + 市值 : bs.mc   + 总股本 : bs.tsc   + 流通股本 : bs.csc   + 总股东人数(季度) : bs.shn   + A股股东人数(季度) : bs.shn\_om  * 利润表   + 一、营业收入 : ps.oi   + 其他业务收入 : ps.ooi   + 税金及附加 : ps.tas   + 投资收益 : ps.ivi   + (其中)对联营企业及合营企业的投资收益 : ps.iifaajv   + 汇兑收益 : ps.ei   + 公允价值变动收益 : ps.ciofv   + 信用减值损失 : ps.cilor   + 资产减值损失 : ps.ailor   + 其他资产减值损失 : ps.oail   + 其他业务成本 : ps.ooe   + 三、营业利润 : ps.op   + 营业利润率 : ps.op\_s\_r   + 加：营业外收入 : ps.noi   + 减：营业外支出 : ps.noe   + 四、利润总额 : ps.tp   + 减：所得税费用 : ps.ite   + 有效税率 : ps.ite\_tp\_r   + 五、净利润 : ps.np   + 净利润率 : ps.np\_s\_r   + (一)持续经营净利润 : ps.npfco   + (二)终止经营净利润 : ps.npfdco   + 归属于母公司股东及其他权益持有者的净利润 : ps.npatshaoehopc   + 归属于母公司普通股股东的净利润 : ps.npatoshopc   + 少数股东损益 : ps.npatmsh   + 归属于母公司普通股股东的扣除非经常性损益的净利润 : ps.npadnrpatoshaopc   + 扣非净利润占比 : ps.npadnrpatoshaopc\_npatoshopc\_r   + 九、分红、融资及涨跌幅   + 分红金额 : ps.da   + A股分红金额 : ps.da\_om   + A股融资金额 : ps.fa\_om   + 十、客户及供应商  * 现金流量表   + 一、经营活动产生的现金流量   + 收取利息、手续费及佣金的现金 : cfs.crfifac   + 收到的其他与经营活动有关现金 : cfs.crrtooa   + 经营活动现金流入小计 : cfs.stciffoa   + 支付利息、手续费及佣金的现金 : cfs.cpfifac   + 支付给职工及为职工支付的现金 : cfs.cptofe   + 支付的各种税费 : cfs.cpft   + 支付的其他与经营活动有关现金 : cfs.cprtooa   + 经营活动现金流出小计 : cfs.stcoffoa   + 经营活动产生的现金流量净额 : cfs.ncffoa   + 二、投资活动产生的现金流量金额   + 收回投资收到的现金 : cfs.crfrci   + 取得投资收益所收到的现金 : cfs.crfii   + 处置固定资产、无形资产及其他长期资产收到的现金 : cfs.crfdofiaolta   + 收到的其他与投资活动相关的现金 : cfs.crrtoia   + 投资活动现金流入小计 : cfs.stcifia   + 购建固定资产、无形资产及其他长期资产所支付的现金 : cfs.cpfpfiaolta   + 投资所支付的现金 : cfs.cpfi   + 支付的其他与投资活动有关的现金 : cfs.cprtoia   + 投资活动现金流出小计 : cfs.stcoffia   + 投资活动产生的现金流量净额 : cfs.ncffia   + 三、筹资活动产生的现金流量   + 吸收投资收到的现金 : cfs.crfai   + 发行债券收到的现金 : cfs.crfib   + 收到的其他与筹资活动有关的现金 : cfs.crrtofa   + 筹资活动产生的现金流入小计 : cfs.stcifffa   + 偿付债务支付的现金 : cfs.cpfbrp   + 分配股利、利润或偿付利息所支付的现金 : cfs.cpfdapdoi   + 支付的其他与筹资活动有关的现金 : cfs.cprtofa   + 筹资活动产生的现金流出小计 : cfs.stcofffa   + 筹资活动产生的现金流量净额 : cfs.ncfffa   + 四、汇率变动对现金及现金等价物的影响 : cfs.iocacedtfier   + 期初现金及现金等价物的余额 : cfs.bocaceatpb   + 现金及现金等价物的净增加额 : cfs.niicace   + 期末现金及现金等价物净余额 : cfs.bocaceatpe   + 五、附注   + 净利润 : cfs.np   + 加：资产减值准备 : cfs.ioa   + 信用减值损失 : cfs.cilor   + 固定资产折旧、油气资产折耗、生产性生物资产折旧 : cfs.dofx\_dooaga\_dopba   + 投资性房地产的折旧及摊销 : cfs.daaorei   + 使用权资产摊销 : cfs.aoroua   + 无形资产摊销 : cfs.aoia   + 长期待摊费用摊销 : cfs.aoltde   + 处置固定资产、无形资产和其他长期资产的损失 : cfs.lodofaiaaolta   + 固定资产报废损失 : cfs.lfsfa   + 公允价值变动损失 : cfs.lfcifv   + 财务费用 : cfs.fe   + 投资损失 : cfs.il   + 递延所得税资产减少 : cfs.didita   + 递延所得税负债增加 : cfs.iiditl   + 存货的减少 : cfs.dii   + 经营性应收项目的减少 : cfs.dior   + 经营性应付项目的增加 : cfs.iiop   + 其他 : cfs.o   + 一年内到期的可转换公司债券 : cfs.cbdwioy   + 融资租入固定资产 : cfs.flofa   + 经营活动产生的现金流量净额 : cfs.ncffoa\_dup  * 财务指标   + 一、人均指标   + 员工人数 : m.ep\_stn (expressionCalculateType参考资产负债表)   + 人均净利润 : m.np\_pc (expressionCalculateType参考利润表)   + 人均薪酬 : m.s\_pc (expressionCalculateType参考现金流量表)   + 总股本 : m.tsc (expressionCalculateType参考资产负债表)   + 归属于母公司普通股股东的每股收益 : m.npatoshopc\_ps (expressionCalculateType参考利润表)   + 归属于母公司普通股股东的每股扣非收益 : m.npadnrpatoshaopc\_ps (expressionCalculateType参考利润表)   + 归属于母公司普通股股东的每股股东权益 : m.tetoshopc\_ps (expressionCalculateType参考资产负债表)   + 每股资本公积 : m.cr\_ps (expressionCalculateType参考资产负债表)   + 每股未分配利润 : m.rp\_ps (expressionCalculateType参考资产负债表)   + 每股分红 : m.da\_ps (expressionCalculateType参考利润表)   + 每股经营活动产生的现金流量 : m.stciffoa\_ps (expressionCalculateType参考现金流量表)   + 每股经营活动产生的现金流量净额 : m.ncffoa\_ps (expressionCalculateType参考现金流量表)   + 三、盈利能力   + 归属于母公司普通股股东的ROE : m.roe\_atoshaopc (expressionCalculateType参考利润表)   + 归属于母公司普通股股东的扣非ROE : m.roe\_adnrpatoshaopc (expressionCalculateType参考利润表)   + 归属于少数股股东的ROE : m.roe\_atomsh (expressionCalculateType参考利润表)   + 净资产收益率(ROE) : m.roe (expressionCalculateType参考利润表)   + 杠杆倍数 : m.l (expressionCalculateType参考资产负债表)   + 总资产收益率(ROA) : m.roa (expressionCalculateType参考利润表)   + 总资产周转率 : m.ta\_to (expressionCalculateType参考利润表)   + 净利润率 : m.np\_s\_r (expressionCalculateType参考利润表)   + 四、营运能力(周转率)   + 固定资产周转率 : m.fa\_tor (expressionCalculateType参考利润表)   + 五、营运能力(周转天数)   + 固定资产周转天数 : m.fa\_ds (expressionCalculateType参考利润表)   + 股东权益周转天数 : m.toe\_ds (expressionCalculateType参考利润表)   + 总资产周转天数 : m.ta\_ds (expressionCalculateType参考利润表)   + 六、偿债及资本结构   + 资产负债率 : m.tl\_ta\_r (expressionCalculateType参考资产负债表)   + 固定资产占总资产比率 : m.fa\_ta\_r (expressionCalculateType参考资产负债表)   + 七、现金流量   + 自由现金流量 : m.fcf (expressionCalculateType参考现金流量表)   + 经投融产生的现金流量净额 : m.ncffoaiafa (expressionCalculateType参考现金流量表)   + 经营活动产生的现金流量净额对营业利润的比率 : m.ncffoa\_op\_r (expressionCalculateType参考利润表)   + 经营活动产生的现金流量净额对净利润的比率 : m.ncffoa\_np\_r (expressionCalculateType参考利润表)   + 经营活动产生的现金流量净额对固定资产的比率 : m.ncffoa\_fa\_r (expressionCalculateType参考现金流量表) |
+
+| 参数名称 | 必选 | 数据类型 | 说明 |
+| --- | --- | --- | --- |
+
+|
+|  |
+
+|
+|  |
+|
+|  |
+|
+|
+|
+|
+|
+|
+
+|
+|  |
+
+加载...
+
+加载数据失败。[请点击此处重新尝试](#!)
+
+您需要登录才能浏览该数据，下面是图片示例：
+
+您的会员使用时间已经到期了，下面是示例图片：
+
+##### API试用 (剩余访问次数): **0**
+
+* [通过日期获取](#!)
+* [通过时间范围获取](#!)
+
+执行
+
+**返回数据:**

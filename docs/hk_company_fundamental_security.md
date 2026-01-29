@@ -1,0 +1,64 @@
+# Source: https://www.lixinger.com/open/api/doc?api-key=hk/company/fundamental/security
+
+# 基本面数据API[购买](/open/api/price-tier?api-groups=[{%22areaCode%22:%22hk%22,%22dataType%22:%22company%22}])
+
+简要描述:
+
+* 获取基本面数据，如PE、PB等。
+
+请求URL:
+
+* `https://open.lixinger.com/api/hk/company/fundamental/security`
+
+请求方式:
+
+* POST
+
+参数:
+
+| 参数名称 | 必选 | 数据类型 | 说明 |
+| --- | --- | --- | --- |
+| token | Yes | String | [我的Token](/open/api/token)页有用户专属且唯一的Token。 |
+| stockCodes | Yes | Array | 股票代码数组。stockCodes长度>=1且<=100，格式如下：["06030"]。 请参考[股票信息API](/open/api/detail?api-key=hk/company)获取合法的stockCode。  需要注意的是，当传入startDate时只能传入一个股票代码。 |
+| date | No | String: YYYY-MM-DD(北京时间) | 指定日期。 需要注意的是，startDate和date至少要传一个。 |
+| startDate | No | String: YYYY-MM-DD(北京时间) | 信息起始时间。用于获取一定时间范围内的数据。开始和结束的时间间隔不超过10年 需要注意的是，startDate和date至少要传一个。 |
+| endDate | No | String: YYYY-MM-DD(北京时间) | 信息结束时间。用于获取一定时间范围内的数据。默认值是上周一。 需要注意的是，请与startDate一起使用。 |
+| limit | No | Number | 返回最近数据的数量。limit仅在请求数据为date range的情况下生效。 |
+| metricsList | Yes | Array | 指标数组。格式如下：['mc', 'pe\_ttm', 'pb', 'dyr']。 需要注意的是，当stockCodes长度大于1时最多只能选取48个指标；当stockCodes长度等于1时最多只能获取36 个指标。 当前支持:估值指标:  * PE-TTM :pe\_ttm * PB :pb * PS-TTM :ps\_ttm * 股息率 :dyr * PCF-TTM :pcf\_ttm * 股价 :sp * 涨跌幅 :spc * 股价振幅 :spa * 成交量 :tv * 成交金额 :ta * 换手率 :to\_r * 市值 :mc * H股市值 :mc\_om * 港股通持仓股数 :ah\_sh * 港股通持仓金额 :ah\_shm * 港股通净买入金额 :mm\_nba * 每手股数 :sharesPerLot  估值统计指标:指标格式为**[metricsName].[granularity].[statisticsDataType]**。 metricsName   * PE-TTM :pe\_ttm * PB :pb * PS-TTM :ps\_ttm * 股息率 :dyr   granularity   * 上市以来 :fs * 20年 :y20 * 10年 :y10 * 5年 :y5 * 3年 :y3 * 1年 :y1   statisticsDataType   * 分位点% :cvpos * 20%分位点值 :q2v * 50%分位点值 :q5v * 80%分位点值 :q8v * 最小值 :minv * 最大值 :maxv * 最大正值 :maxpv * 平均值 :avgv |
+
+| 参数名称 | 必选 | 数据类型 | 说明 |
+| --- | --- | --- | --- |
+
+|
+|  |
+
+|
+|  |
+|
+|  |
+|
+|
+|
+|
+|
+|
+
+|
+|  |
+
+加载...
+
+加载数据失败。[请点击此处重新尝试](#!)
+
+您需要登录才能浏览该数据，下面是图片示例：
+
+您的会员使用时间已经到期了，下面是示例图片：
+
+##### API试用 (剩余访问次数): **0**
+
+* [通过日期获取](#!)
+* [通过时间范围获取](#!)
+
+执行
+
+**返回数据:**
