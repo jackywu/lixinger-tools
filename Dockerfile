@@ -14,16 +14,17 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     UV_COMPILE_BYTECODE=1 \
-    UV_LINK_MODE=copy
+    UV_LINK_MODE=copy \
+    PYTHONPATH=/app/src
 
 # Copy project files
 COPY pyproject.toml uv.lock ./
 COPY src/ ./src/
 
-# Install dependencies using uv
+# Install dependencies using uv in a separate layer for better caching
 RUN uv sync --frozen --no-dev --no-install-project
 
-# Install the project
+# Install the project in a separate layer
 RUN uv sync --frozen --no-dev
 
 # Expose port
